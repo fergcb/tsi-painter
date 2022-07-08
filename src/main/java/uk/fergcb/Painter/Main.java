@@ -38,8 +38,8 @@ public class Main {
      * @return A user-friendly list of the cans needed
      */
     private static String buildCansList(Map<Double, Integer> cansRequired) {
-        StringBuilder sb = new StringBuilder();
-        List<Double> canSizes = new ArrayList<>(cansRequired.keySet());
+        final StringBuilder sb = new StringBuilder();
+        final List<Double> canSizes = new ArrayList<>(cansRequired.keySet());
         for (int i = 0; i < canSizes.size(); i++) {
             final double size = canSizes.get(i);
             final int count = cansRequired.get(size);
@@ -63,11 +63,11 @@ public class Main {
      * @return A map of can sizes to the number required of each
      */
     private static Map<Double, Integer> getCansRequired(Paint paint, double litresRequired, double canSize) {
-        Map<Double, Integer> cans = new LinkedHashMap<>();
+        final Map<Double, Integer> cans = new LinkedHashMap<>();
         if (canSize == AUTO_CALC_SIZE) {
             // All can sizes available in the selected colour
             // Sorted descending
-            List<Double> sizes = paint.sizes.stream()
+            final List<Double> sizes = paint.sizes.stream()
                     .sorted((a, b) -> (int) Math.signum(b - a))
                     .toList();
 
@@ -79,14 +79,14 @@ public class Main {
 
             // Calculate how many of each size
             for (Double size : sizes) {
-                int cansRequired = (int) (litresRequired / size);
+                final int cansRequired = (int) (litresRequired / size);
                 if (cansRequired == 0) continue;
                 litresRequired %= size;
                 cans.put(size, cansRequired);
             }
 
         } else {
-            int cansRequired = (int) Math.ceil(litresRequired / canSize);
+            final int cansRequired = (int) Math.ceil(litresRequired / canSize);
             cans.put(canSize, cansRequired);
         }
 
@@ -102,8 +102,8 @@ public class Main {
     private static Paint choosePaint(List<Paint> paints) {
         System.out.println("\nPlease select a paint:");
         for (int i = 0; i < paints.size(); i++) {
-            Paint paint = paints.get(i);
-            System.out.printf("%d - %s\n", i + 1, paint.name);
+            final Paint paint = paints.get(i);
+            System.out.printf("%d - %s\t(coverage: %.1f m² per litre)\n", i + 1, paint.name, paint.coverage);
         }
 
         int selection;
@@ -189,7 +189,7 @@ public class Main {
 
         do {
             System.out.println("What shape is the obstruction?");
-            String shape = getShape();
+            final String shape = getShape();
 
             System.out.println("How large is the obstruction?");
             totalArea += switch (shape) {
@@ -209,7 +209,7 @@ public class Main {
      * @return The name of the shape.
      */
     private static String getShape() {
-        List<String> possibleShapes = Arrays.asList("rect", "ellipse", "circle");
+        final List<String> possibleShapes = Arrays.asList("rect", "ellipse", "circle");
 
         String shape;
         do {
