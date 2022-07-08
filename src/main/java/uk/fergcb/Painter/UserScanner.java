@@ -25,13 +25,14 @@ public class UserScanner {
      * @param string The string to parse
      * @return true if the string can be converted into a double, else false
      */
-    public static boolean isDouble(String string) {
+    public static boolean isValidDouble(String string) {
+        double value;
         try {
-            Double.parseDouble(string);
+            value = Double.parseDouble(string);
         } catch (NullPointerException | NumberFormatException ex) {
             return false;
         }
-        return true;
+        return value > 0;
     }
 
     /**
@@ -40,13 +41,14 @@ public class UserScanner {
      * @param string The string to parse
      * @return true if the string can be converted into an integer, else false
      */
-    public static boolean isInt(String string) {
+    public static boolean isValidInt(String string) {
+        int value;
         try {
-            Integer.parseInt(string);
+            value = Integer.parseInt(string);
         } catch (NullPointerException | NumberFormatException ex) {
             return false;
         }
-        return true;
+        return value > 0;
     }
 
     /**
@@ -70,8 +72,8 @@ public class UserScanner {
         System.out.print(prompt);
 
         String line = takeLine();
-        while (!isDouble(line)) {
-            System.out.println("Invalid input. Please enter a decimal value.");
+        while (!isValidDouble(line)) {
+            System.out.println("Invalid input. Please enter a decimal value greater than zero.");
             System.out.print(prompt);
             line = takeLine();
         }
@@ -89,8 +91,8 @@ public class UserScanner {
         System.out.print(prompt);
 
         String line = takeLine();
-        while (!isInt(line)) {
-            System.out.println("Invalid input. Please enter a whole number.");
+        while (!isValidInt(line)) {
+            System.out.println("Invalid input. Please enter a whole number greater than zero.");
             System.out.print(prompt);
             line = takeLine();
         }
