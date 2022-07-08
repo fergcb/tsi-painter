@@ -1,14 +1,12 @@
 package uk.fergcb.Painter;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
 public class Main {
 
     private static final int AUTO_CALC_SIZE = -1;
 
-    private static final Scanner scanner = new Scanner(System.in);
+    private static final UserScanner us = new UserScanner();
 
     public static void main(String[] args) {
         // Paints available
@@ -36,7 +34,7 @@ public class Main {
         System.out.printf("You will need " + canString + ".");
 
         // Free stdin from the scanner
-        scanner.close();
+        us.close();
     }
 
     /**
@@ -60,118 +58,6 @@ public class Main {
         }
 
         return sb.toString();
-    }
-
-    /**
-     * Check whether a string can be converted into a double
-     *
-     * @param string The string to parse
-     * @return true if the string can be converted into a double, else false
-     */
-    private static boolean isDouble(String string) {
-        try {
-            Double.parseDouble(string);
-        } catch (NullPointerException | NumberFormatException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Check whether a string can be converted into an integer
-     *
-     * @param string The string to parse
-     * @return true if the string can be converted into an integer, else false
-     */
-    private static boolean isInt(String string) {
-        try {
-            Integer.parseInt(string);
-        } catch (NullPointerException | NumberFormatException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Read a line from the scanner and normalise it
-     *
-     * @return A line of cleaned user input
-     */
-    private static String takeLine() {
-        return scanner.nextLine()
-                .trim()
-                .toLowerCase(Locale.ROOT);
-    }
-
-    /**
-     * Get a double from stdin. Keep trying until a valid double is entered.
-     *
-     * @param prompt A user-facing prompt string
-     * @return a decimal value entered by the user
-     */
-    private static double takeDouble(String prompt) {
-        System.out.print(prompt);
-
-        String line = takeLine();
-        while (!isDouble(line)) {
-            System.out.println("Invalid input. Please enter a decimal value.");
-            System.out.print(prompt);
-            line = takeLine();
-        }
-
-        return Double.parseDouble(line);
-    }
-
-    /**
-     * Get an int from stdin. Keep trying until a valid integer is entered.
-     *
-     * @param prompt A user-facing prompt string
-     * @return an integer value entered by the user
-     */
-    private static int takeInt(String prompt) {
-        System.out.print(prompt);
-
-        String line = takeLine();
-        while (!isInt(line)) {
-            System.out.println("Invalid input. Please enter a whole number.");
-            System.out.print(prompt);
-            line = takeLine();
-        }
-
-        return Integer.parseInt(line);
-    }
-
-    /**
-     * Ask a yes/no question
-     *
-     * @param prompt   The user-facing question string
-     * @param fallback The default response if none is given
-     * @return true for input starting with "y", false for "n", otherwise return fallback
-     */
-    private static boolean query(String prompt, boolean fallback) {
-        final String msg = prompt + (fallback ? " (Y/n) " : " (y/N) ");
-        System.out.print(msg);
-
-        final String res = scanner
-                .nextLine()
-                .trim()
-                .toLowerCase(Locale.ROOT);
-
-        return switch (res) {
-            case "y", "yes", "yeah", "yep" -> true;
-            case "n", "no", "nah", "nope" -> false;
-            default -> fallback;
-        };
-    }
-
-    /**
-     * Ask a yes/no question, defaulting to false if no answer given.
-     *
-     * @param prompt The user-facing question string
-     * @return true for input starting with "y", otherwise false
-     */
-    private static boolean query(String prompt) {
-        return query(prompt, false);
     }
 
     /**
@@ -228,7 +114,7 @@ public class Main {
 
         int selection;
         do {
-            selection = takeInt("Selection: ") - 1;
+            selection = us.takeInt("Selection: ") - 1;
         } while (selection < 0 || selection >= paints.size());
 
         final Paint selectedPaint = paints.get(selection);
@@ -252,11 +138,11 @@ public class Main {
         String prompt = String.format("Selection %s or 'auto': ", sizes.toString());
         System.out.print(prompt);
 
-        String line = takeLine();
-        while (!isDouble(line) && !line.equals("auto")) {
+        String line = us.takeLine();
+        while (!UserScanner.isDouble(line) && !line.equals("auto")) {
             System.out.println("Invalid input. Please enter a listed size, or 'auto'.");
             System.out.print(prompt);
-            line = takeLine();
+            line = us.takeLine();
         }
 
         if (line.equals("auto")) return AUTO_CALC_SIZE;
@@ -277,7 +163,7 @@ public class Main {
         do {
             System.out.println("How large is the wall?");
             totalArea += getRectArea();
-        } while (query("Are there any more walls?"));
+        } while (us.query("Are there any more walls?"));
 
         return totalArea;
     }
@@ -288,7 +174,7 @@ public class Main {
      * @return The sum of the areas of the negative spaces in square meters.
      */
     private static double getTotalNegativeArea() {
-        if (!query("\nAre there any obstructions (windows, doors, sockets, etc.)?"))
+        if (!us.query("\nAre there any obstructions (windows, doors, sockets, etc.)?"))
             return 0;
 
         double totalArea = 0;
@@ -304,7 +190,7 @@ public class Main {
                 case "ellipse" -> getEllipseArea();
                 default -> throw new IllegalArgumentException(String.format("Invalid shape %s specified.", shape));
             };
-        } while (query("Are there any more obstructions?"));
+        } while (us.query("Are there any more obstructions?"));
 
         return totalArea;
     }
@@ -320,7 +206,7 @@ public class Main {
         String shape;
         do {
             System.out.printf("Shape %s: ", possibleShapes.toString());
-            shape = scanner.nextLine();
+            shape = us.takeLine();
         } while (!possibleShapes.contains(shape));
 
         return shape;
@@ -332,8 +218,8 @@ public class Main {
      * @return The area of the rectangle in square meters.
      */
     private static double getRectArea() {
-        final double height = takeDouble("Height (m): ");
-        final double width = takeDouble("Width (m): ");
+        final double height = us.takeDouble("Height (m): ");
+        final double width = us.takeDouble("Width (m): ");
         return (height * width);
     }
 
@@ -343,7 +229,7 @@ public class Main {
      * @return The area of the rectangle in square meters.
      */
     private static double getCircleArea() {
-        final double d = takeDouble("Diameter (m): ");
+        final double d = us.takeDouble("Diameter (m): ");
         final double r = d * .5;
         return Math.PI * r * r;
     }
@@ -354,25 +240,8 @@ public class Main {
      * @return The area of the rectangle in square meters.
      */
     private static double getEllipseArea() {
-        final double a = takeDouble("Height (m): ");
-        final double b = takeDouble("Width (m): ");
+        final double a = us.takeDouble("Height (m): ");
+        final double b = us.takeDouble("Width (m): ");
         return Math.PI * a * b;
-    }
-
-    /**
-     * A data class to describe a colour of paint.
-     */
-    private static class Paint {
-        public final String name;
-        public final double coverage;
-        public final List<Double> sizes;
-
-        public Paint(String name, double coverage, double[] sizes) {
-            this.name = name;
-            this.coverage = coverage;
-            this.sizes = DoubleStream.of(sizes)
-                    .boxed()
-                    .collect(Collectors.toList());
-        }
     }
 }
