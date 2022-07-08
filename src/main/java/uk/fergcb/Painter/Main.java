@@ -85,9 +85,9 @@ public class Main {
 
             // Calculate how many of each size
             for (Double size : sizes) {
-                int cansRequired = (int) Math.floor(litresRequired / size);
-                litresRequired %= size;
+                int cansRequired = (int) (litresRequired / size);
                 if (cansRequired == 0) continue;
+                litresRequired %= size;
                 cans.put(size, cansRequired);
             }
 
@@ -139,7 +139,7 @@ public class Main {
         System.out.print(prompt);
 
         String line = us.takeLine();
-        while (!UserScanner.isDouble(line) && !line.equals("auto")) {
+        while (!isValidSize(paint, line)) {
             System.out.println("Invalid input. Please enter a listed size, or 'auto'.");
             System.out.print(prompt);
             line = us.takeLine();
@@ -153,6 +153,19 @@ public class Main {
     }
 
     /**
+     * Check if a string is a valid paint size
+     * @param paint The selected paint
+     * @param line The size string to check
+     * @return true if the size is valid, else false
+     */
+    private static boolean isValidSize(Paint paint, String line) {
+        if (line.equals("auto")) return true;
+        if (!UserScanner.isValidDouble(line)) return false;
+        final double size = Double.parseDouble(line);
+        return paint.sizes.contains(size);
+    }
+
+    /**
      * Prompt the user to get input the dimensions of one or more walls.
      *
      * @return The sum of the areas of the walls in square meters.
@@ -160,8 +173,9 @@ public class Main {
     private static double getTotalWallArea() {
         double totalArea = 0;
 
+        int i = 1;
         do {
-            System.out.println("How large is the wall?");
+            System.out.printf("How large is wall #%d?\n", i++);
             totalArea += getRectArea();
         } while (us.query("Are there any more walls?"));
 
