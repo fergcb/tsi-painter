@@ -9,12 +9,6 @@ public class Main {
     private static final UserScanner us = new UserScanner();
 
     public static void main(String[] args) {
-        // Paints available
-        final List<Paint> paints = Arrays.asList(
-                new Paint("Foo Green", 6, new double[]{0.5, 1, 2.5, 5}),
-                new Paint("Bar Blue", 6.75, new double[]{1, 2.5, 5, 10}),
-                new Paint("Baz Beige", 5.5, new double[]{5, 10, 20})
-        );
 
         // Calculate the area we need to cover
         final double wallArea = getTotalWallArea();
@@ -22,7 +16,7 @@ public class Main {
         final double totalArea = wallArea - negativeArea;
 
         // Select the paint we need
-        final Paint selectedPaint = choosePaint(paints);
+        final Paint selectedPaint = choosePaint(Paint.paintsAvailable);
         final double canSize = chooseSize(selectedPaint);
 
         // Get the number of cans required
